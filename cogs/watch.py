@@ -57,6 +57,8 @@ class Watch(commands.Cog):
                 inv = invite
 
         channel = inv.channel
+        if inv.url == GUILD_INVITE:
+            return
         topic = channel.topic.split()
         if len(topic) == 2:
             if topic[1] != '-1':
