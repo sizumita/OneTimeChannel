@@ -54,7 +54,7 @@ class Watch(commands.Cog):
                 self.bot.invites[invite.id] = invite.uses
                 continue
             if self.bot.invites[invite.id] != invite.uses:
-                self.bot.invites[inv.id] += 1
+                self.bot.invites[invite.id] += 1
                 inv = invite
 
         channel = inv.channel
