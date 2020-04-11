@@ -18,7 +18,4 @@ class MyBot(commands.Bot):
         for invite in await guild.invites():
             self.invites[invite.id] = invite.uses
 
-        for x in guild.roles:
-            if x.name == 'new role':
-                await x.delete()
 

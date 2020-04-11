@@ -54,6 +54,7 @@ class Watch(commands.Cog):
                 self.bot.invites[invite.id] = invite.uses
                 continue
             if self.bot.invites[invite.id] != invite.uses:
+                self.bot.invites[inv.id] += 1
                 inv = invite
 
         channel = inv.channel
@@ -69,6 +70,28 @@ class Watch(commands.Cog):
         ov = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         await channel.set_permissions(member, overwrite=ov)
         await channel.send(f'{member.mention}さんが入室しました。')
+
+    @commands.Cog.listener(name='on_message')
+    async def dm_join(self, message):
+        if isinstance(message.channel, discord.DMChannel):
+            if message.content.startswith('http://discord.gg/'):
+                guild = self.bot.get_guild(698296192152502274)
+                for invite in await guild.invites():
+                    if invite.url == message.content:
+                        channel = invite.channel
+                        if invite.url == GUILD_INVITE:
+                            return
+                        topic = channel.topic.split()
+                        if len(topic) == 2:
+                            if topic[1] != '-1':
+                                if invite.uses >= int(topic[1]):
+                                    await message.author.send(f'申し訳ありませんが、チャンネル作成者が設定した人数制限によって入室することができませんでした。')
+                                    return
+                        member = guild.get_member(message.author.id)
+                        ov = discord.PermissionOverwrite(read_messages=True, send_messages=True)
+                        await channel.set_permissions(member, overwrite=ov)
+                        await channel.send(f'{member.mention}さんが入室しました。')
+                        return
 
 
 def setup(bot):
