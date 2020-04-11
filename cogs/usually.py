@@ -14,6 +14,17 @@ class Usually(commands.Cog):
         role = ctx.guild.get_role(ROLE_ID)
         await ctx.author.add_roles(role)
 
+    @commands.command()
+    async def leave(self, ctx):
+        """チャンネルから去ります。"""
+        if ctx.channel.category:
+            if ctx.channel.category.id == 698300310669754369:
+                if ctx.channel.topic.split()[0] == str(ctx.author.id):
+                    return
+                ov = discord.PermissionOverwrite(read_messages=False, send_messages=False)
+                await ctx.channel.set_permissions(ctx.author, overwrite=ov)
+                return
+
 
 def setup(bot):
     return bot.add_cog(Usually(bot))
