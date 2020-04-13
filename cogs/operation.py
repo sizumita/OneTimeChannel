@@ -26,6 +26,12 @@ class Operation(commands.Cog):
         for invite in invites:
             await invite.delete()
 
+        topic = ctx.channel.topic.split()
+        if len(topic) != 3 or topic[2] != '-1':
+            voice = ctx.guild.get_channel(int(topic[2]))
+            if voice:
+                await voice.delete()
+
         await ctx.channel.delete()
 
     @commands.command()
@@ -74,14 +80,26 @@ class Operation(commands.Cog):
     async def voice(self, ctx):
         """ボイスチャンネルを作成します"""
         topic = ctx.channel.topic.split()
-        if topic[2] != '-1':
+        if len(topic) != 3 or topic[2] != '-1':
             voice = ctx.guild.get_channel(int(topic[2]))
             if voice:
                 await ctx.send("既に存在します")
                 return
             return
-        ov = discord.PermissionOverwrite(speak=True, connect=True)
-        voice = await ctx.channel.category.create_voice_channel(name=ctx.channel)
+        ov = discord.PermissionOverwrite(speak=True, connect=True, view_channel=True)
+        discord.Permissions.voice()
+        voice = await ctx.channel.category.create_voice_channel(name=ctx.channel.name)
+        if len(topic) == 1:
+            topic += ['-1', str(voice.id)]
+        elif len(topic) == 2:
+            topic += [str(voice.id)]
+        else:
+            topic[2] = str(voice.id)
+        await ctx.channel.edit(topic='\n'.join(topic))
+
+        for member in ctx.channel.members:
+            await voice.set_permissions(member, overwrite=ov)
+        await ctx.send('作成されました。')
 
 
 def setup(bot):
