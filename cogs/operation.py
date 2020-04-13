@@ -54,6 +54,11 @@ class Operation(commands.Cog):
     async def name(self, ctx, name):
         """チャンネル名を変更します。"""
         await ctx.channel.edit(name=name)
+        topic = ctx.channel.topic.split()
+        if topic[2] != '-1':
+            voice = ctx.guild.get_channel(int(topic[2]))
+            if voice:
+                await voice.edit(name=name)
         await ctx.send('設定しました。')
 
     @commands.command()
@@ -64,6 +69,19 @@ class Operation(commands.Cog):
             return
         await ctx.channel.edit(nsfw=True)
         await ctx.send('設定しました。')
+
+    @commands.command()
+    async def voice(self, ctx):
+        """ボイスチャンネルを作成します"""
+        topic = ctx.channel.topic.split()
+        if topic[2] != '-1':
+            voice = ctx.guild.get_channel(int(topic[2]))
+            if voice:
+                await ctx.send("既に存在します")
+                return
+            return
+        ov = discord.PermissionOverwrite(speak=True, connect=True)
+        voice = await ctx.channel.category.create_voice_channel(name=ctx.channel)
 
 
 def setup(bot):

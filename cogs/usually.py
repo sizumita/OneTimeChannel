@@ -23,6 +23,7 @@ class Usually(commands.Cog):
                     return
                 ov = discord.PermissionOverwrite(read_messages=False, send_messages=False)
                 await ctx.channel.set_permissions(ctx.author, overwrite=ov)
+                await ctx.channel.send(f'{ctx.author}さんが退出しました。')
                 return
 
 
