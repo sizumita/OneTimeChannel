@@ -110,7 +110,7 @@ class Watch(commands.Cog):
     async def dm_check(self, message):
         if isinstance(message.channel, discord.DMChannel):
             guild = self.bot.get_guild(698296192152502274)
-            if invite_id_list := re.findall('https://discord.gg/(.{7})', message.content):
+            if invite_id_list := re.findall(r'.*discord\.gg/(.{7}).*', message.content):
                 invites = [inv for inv in await guild.invites() if inv.id in invite_id_list]
                 for invite in invites:
                     channel = invite.channel
@@ -126,7 +126,9 @@ class Watch(commands.Cog):
             return
         if not message.channel.category:
             return
-        if invite_id_list := re.findall('https://discord.gg/(.{7})', message.content):
+        if message.author.bot:
+            return
+        if invite_id_list := re.findall(r'.*discord\.gg/(.{7}).*', message.content):
             invites = [inv for inv in await message.guild.invites() if inv.id in invite_id_list]
             for invite in invites:
                 msg = await message.channel.send(invite_text.format(invite.url))
