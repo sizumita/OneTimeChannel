@@ -27,7 +27,7 @@ class Operation(commands.Cog):
             await invite.delete()
 
         topic = ctx.channel.topic.split()
-        if len(topic) != 3 or topic[2] != '-1':
+        if len(topic) == 3 and topic[2] != '-1':
             voice = ctx.guild.get_channel(int(topic[2]))
             if voice:
                 await voice.delete()
@@ -85,7 +85,6 @@ class Operation(commands.Cog):
             if voice:
                 await ctx.send("既に存在します")
                 return
-            return
         ov = discord.PermissionOverwrite(speak=True, connect=True, view_channel=True)
         discord.Permissions.voice()
         voice = await ctx.channel.category.create_voice_channel(name=ctx.channel.name)
