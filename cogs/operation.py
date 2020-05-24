@@ -14,6 +14,8 @@ class Operation(commands.Cog):
             return False
 
         if ctx.channel.category.id == 698300310669754369:
+            if ctx.channel.topic == "[GAME]":
+                return False
             if ctx.channel.topic.split()[0] == str(ctx.author.id):
                 return True
 
@@ -87,7 +89,7 @@ class Operation(commands.Cog):
                 return
         ov = discord.PermissionOverwrite(speak=True, connect=True, view_channel=True)
         discord.Permissions.voice()
-        voice = await ctx.channel.category.create_voice_channel(name=ctx.channel.name)
+        voice = await ctx.channel.guild.create_voice_channel(name=ctx.channel.name)
         if len(topic) == 1:
             topic += ['-1', str(voice.id)]
         elif len(topic) == 2:

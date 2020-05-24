@@ -8,6 +8,16 @@ class Usually(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def cog_check(self, ctx):
+        if not ctx.channel.category:
+            return False
+        if ctx.channel.category.id == 698300310669754369:
+            if ctx.channel.topic == "[GAME]":
+                return False
+            return True
+
+        return False
+
     @commands.command()
     async def main(self, ctx):
         """メインチャンネル群へ接続します。"""
@@ -17,14 +27,12 @@ class Usually(commands.Cog):
     @commands.command()
     async def leave(self, ctx):
         """チャンネルから去ります。"""
-        if ctx.channel.category:
-            if ctx.channel.category.id == 698300310669754369:
-                if ctx.channel.topic.split()[0] == str(ctx.author.id):
-                    return
-                ov = discord.PermissionOverwrite(read_messages=False, send_messages=False)
-                await ctx.channel.set_permissions(ctx.author, overwrite=ov)
-                await ctx.channel.send(f'{ctx.author}さんが退出しました。')
-                return
+        if ctx.channel.topic.split()[0] == str(ctx.author.id):
+            return
+        ov = discord.PermissionOverwrite(read_messages=False, send_messages=False)
+        await ctx.channel.set_permissions(ctx.author, overwrite=ov)
+        await ctx.channel.send(f'{ctx.author}さんが退出しました。')
+        return
 
 
 def setup(bot):

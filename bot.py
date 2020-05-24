@@ -6,7 +6,7 @@ GUILD_INVITE = "https://discord.gg/qCKy9va"
 
 class MyBot(commands.Bot):
     def __init__(self):
-        super().__init__('/')
+        super().__init__(command_prefix=commands.when_mentioned_or('/'))
         self.invites = {}
 
     async def on_command_error(self, context, exception):
@@ -18,5 +18,9 @@ class MyBot(commands.Bot):
         guild = self.get_guild(698296192152502274)
         for invite in await guild.invites():
             self.invites[invite.id] = invite.uses
+
+        ch = self.get_channel(698300310669754369)
+        if ch is not None:
+            await ch.delete()
 
 

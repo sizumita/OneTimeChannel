@@ -36,17 +36,16 @@ class Watch(commands.Cog):
         if member.bot:
             return
         reactioned_message = await guild.get_channel(payload.channel_id).fetch_message(payload.message_id)
-        category = guild.get_channel(698300310669754369)
+        await reactioned_message.remove_reaction('\U0001f44d', member)
         topic = f'{member.id}\n-1\n-1'
         ov = discord.PermissionOverwrite(read_messages=True, send_messages=True, manage_messages=True)
-        channel = await category.create_text_channel(name=member.name, overwrites={member: ov}, topic=topic)
+        channel = await guild.create_text_channel(name=member.name, overwrites={member: ov}, topic=topic)
         invite = await channel.create_invite()
         embed = first_message(member)
         msg = await channel.send(embed=embed)
         self.bot.invites[invite.id] = invite.uses
         await channel.send(f'招待url: {invite.url}')
         await msg.pin()
-        await reactioned_message.remove_reaction('\U0001f44d', member)
         log = self.bot.get_channel(LOG_CHANNEL)
         await log.send(f'{member.mention}がチャンネルを作成しました！')
 
