@@ -11,10 +11,6 @@ class Usually(commands.Cog):
     def cog_check(self, ctx):
         if ctx.channel.category:
             return False
-        if ctx.channel.category.id == 698300310669754369:
-            if ctx.channel.topic == "[GAME]":
-                return False
-            return True
 
         return False
 

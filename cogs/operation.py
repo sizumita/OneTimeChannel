@@ -13,11 +13,8 @@ class Operation(commands.Cog):
         if ctx.channel.category:
             return False
 
-        if ctx.channel.category.id == 698300310669754369:
-            if ctx.channel.topic == "[GAME]":
-                return False
-            if ctx.channel.topic.split()[0] == str(ctx.author.id):
-                return True
+        if ctx.channel.topic.split()[0] == str(ctx.author.id):
+            return True
 
         return False
 
