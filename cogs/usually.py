@@ -9,7 +9,7 @@ class Usually(commands.Cog):
         self.bot = bot
 
     def cog_check(self, ctx):
-        if not ctx.channel.category:
+        if ctx.channel.category:
             return False
         if ctx.channel.category.id == 698300310669754369:
             if ctx.channel.topic == "[GAME]":

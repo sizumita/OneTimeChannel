@@ -10,7 +10,7 @@ class Operation(commands.Cog):
         self.bot = bot
 
     def cog_check(self, ctx):
-        if not ctx.channel.category:
+        if ctx.channel.category:
             return False
 
         if ctx.channel.category.id == 698300310669754369:
@@ -28,8 +28,8 @@ class Operation(commands.Cog):
         for invite in invites:
             await invite.delete()
 
-        topic = ctx.channel.topic.split()
-        if len(topic) == 3 and topic[2] != '-1':
+        topic = ctx.channel.topic.split('\n')
+        if topic[2] != '-1':
             voice = ctx.guild.get_channel(int(topic[2]))
             if voice:
                 await voice.delete()

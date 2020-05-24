@@ -19,8 +19,4 @@ class MyBot(commands.Bot):
         for invite in await guild.invites():
             self.invites[invite.id] = invite.uses
 
-        ch = self.get_channel(698300310669754369)
-        if ch is not None:
-            await ch.delete()
-
 
