@@ -80,3 +80,6 @@ class JoinChannel(commands.Cog):
                         return
                     member = guild.get_member(message.author.id)
                     await self.join_channel(channel, invite, member)
+
+def setup(bot):
+    return bot.add_cog(JoinChannel(bot))
