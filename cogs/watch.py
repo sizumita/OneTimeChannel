@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from cogs.utils.texts import greeting_message, first_message
 import re
+import asyncio
 GUILD_INVITE = "https://discord.gg/qCKy9va"
 LOG_CHANNEL = 698300390449348617
 invite_text = """
@@ -16,6 +17,7 @@ class Watch(commands.Cog):
         self.bot = bot
         self.bot.loop.create_task(self.reset())
         self.greeting_message_id = None
+        self.cooldown = []
 
     async def reset(self):
         await self.bot.wait_until_ready()
@@ -25,12 +27,19 @@ class Watch(commands.Cog):
         self.greeting_message_id = msg.id
         await msg.add_reaction('\U0001f44d')
 
+    async def do_cooldown(self, user_id):
+        self.cooldown.append(user_id)
+        await asyncio.sleep(120)
+        self.cooldown.remove(user_id)
+
     @commands.Cog.listener(name='on_raw_reaction_add')
     async def create_channel(self, payload: discord.RawReactionActionEvent):
         """チャンネルを作成する"""
         if payload.message_id != self.greeting_message_id:
             return
-
+        if payload.user_id in self.cooldown:
+            return
+        self.bot.loop.create_task(self.do_cooldown(payload.user_id))
         guild = self.bot.get_guild(payload.guild_id)
         member = guild.get_member(payload.user_id)
         if member.bot:
