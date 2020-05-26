@@ -11,7 +11,7 @@ class Usually(commands.Cog):
     def cog_check(self, ctx):
         if ctx.guild is None:
             return False
-        if ctx.category is None:
+        if ctx.channel.category is None:
             return False
         return True
 
