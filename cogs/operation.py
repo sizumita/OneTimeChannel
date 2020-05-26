@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+from cogs.utils.topic import set_voice_channel, get_voice_channel_id
 
 
 class Operation(commands.Cog):
@@ -78,26 +79,41 @@ class Operation(commands.Cog):
     @commands.command()
     async def voice(self, ctx):
         """ボイスチャンネルを作成します"""
-        topic = ctx.channel.topic.split()
-        if len(topic) != 3 or topic[2] != '-1':
-            voice = ctx.guild.get_channel(int(topic[2]))
-            if voice:
+        if voice_id := get_voice_channel_id(ctx.channel.topic):
+            voice = ctx.guild.get_channel(voice_id)
+            if voice is not None:
                 await ctx.send("既に存在します")
                 return
         ov = discord.PermissionOverwrite(speak=True, connect=True, view_channel=True)
-        discord.Permissions.voice()
         voice = await ctx.channel.guild.create_voice_channel(name=ctx.channel.name)
-        if len(topic) == 1:
-            topic += ['-1', str(voice.id)]
-        elif len(topic) == 2:
-            topic += [str(voice.id)]
-        else:
-            topic[2] = str(voice.id)
-        await ctx.channel.edit(topic='\n'.join(topic))
+        await ctx.channel.edit(topic=set_voice_channel(voice.id, ctx.channel.topic))
 
         for member in ctx.channel.members:
             await voice.set_permissions(member, overwrite=ov)
         await ctx.send('作成されました。')
+
+    @commands.command()
+    async def kick(self, ctx, member: discord.Member):
+        """チャンネルからメンバーを退出させます。"""
+        ov = discord.PermissionOverwrite(read_messages=False)
+        voice_ov = discord.PermissionOverwrite(speak=False, connect=False, view_channel=False)
+        if voice_id := get_voice_channel_id(ctx.channel.topic):
+            voice = ctx.guild.get_channel(voice_id)
+            if voice is not None:
+                await voice.set_permissions(target=member, overwrite=voice_ov)
+        await ctx.channel.set_permissions(target=member, overwrite=ov)
+        await ctx.send(f'ユーザー: {member} を退出させました。')
+
+    @commands.command()
+    @commands.cooldown(1, 60.0)
+    async def refresh(self, ctx):
+        """チャンネルの招待を変更します。"""
+        for invite in await ctx.channel.invites():
+            await invite.delete()
+        invite = await ctx.channel.create_invite()
+        self.bot.invites[invite.id] = invite.uses
+        msg = await ctx.send(f'新規招待url: {invite.url}')
+        await msg.pin()
 
 
 def setup(bot):

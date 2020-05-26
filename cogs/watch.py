@@ -44,8 +44,9 @@ class Watch(commands.Cog):
         embed = first_message(member)
         msg = await channel.send(embed=embed)
         self.bot.invites[invite.id] = invite.uses
-        await channel.send(f'招待url: {invite.url}')
+        msg2 = await channel.send(f'招待url: {invite.url}')
         await msg.pin()
+        await msg2.pin()
         log = self.bot.get_channel(LOG_CHANNEL)
         await log.send(f'{member.mention}がチャンネルを作成しました！')
 
