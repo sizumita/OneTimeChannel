@@ -9,10 +9,11 @@ class Usually(commands.Cog):
         self.bot = bot
 
     def cog_check(self, ctx):
-        if ctx.channel.category:
+        if ctx.guild is None:
             return False
-
-        return False
+        if ctx.category is None:
+            return False
+        return True
 
     @commands.command()
     async def main(self, ctx):
